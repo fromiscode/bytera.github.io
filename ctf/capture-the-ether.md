@@ -1,4 +1,10 @@
-# Capture The Ether Write-Up
+---
+layout: page
+title: Capture The Ether Write-up
+permalink: /capture-the-ether/
+---
+
+# Capture The Ether
 
 ## Warmup
 ### Deploy a contract
