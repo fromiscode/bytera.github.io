@@ -50,8 +50,6 @@ function exploit(address _pool) external {
 }
 ```
 
-
-
 ### Side entrance
 The objective of this challenge is:
 - Transfer all ethers from `SideEntranceLenderPool` contract to the attacker.
@@ -215,7 +213,6 @@ tx = await this.lendingPool.connect(attacker).borrow(POOL_INITIAL_TOKEN_BALANCE)
 await tx.wait();
 ```
 
-
 ### Free rider
 The objective of this challenge is:
 - Drain all NFTs and ethers from `FreeRiderNFTMarketplace` contract.
@@ -244,7 +241,6 @@ function uniswapV2Call(address sender, uint amount0, uint amount1, bytes calldat
     }
 }
 ```
-
 
 ### Backdoor
 The objective of this challenge is:
