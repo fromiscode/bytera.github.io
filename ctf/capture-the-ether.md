@@ -63,7 +63,7 @@ tx = await challenge.guess(ethers.BigNumber.from(answer), {values:ethers.utils.p
 await tx.wait();
 ```
 #### Reference
-- <https://docs.soliditylang.org/en/v0.4.21/contracts.html#visibility-and-getters>{:target="_blank"}
+- <https://docs.soliditylang.org/en/v0.4.21/contracts.html#visibility-and-getters>
 
 ### Guess the new number
 Since the answer is computed when `guess()` function is called, the challenger can create a contract to call the `guess()` function with the exact same instructions `uint8(keccak256(block.blockhash(block.number - 1), now))` as the argument.
@@ -92,7 +92,7 @@ The `block.blockhash()` function only stores the hash for the 256 most recent bl
 3. Call `settle()` function.
 
 #### Reference
-- <https://docs.soliditylang.org/en/v0.4.21/units-and-global-variables.html#special-variables-and-functions>{:target="_blank"}
+- <https://docs.soliditylang.org/en/v0.4.21/units-and-global-variables.html#special-variables-and-functions>
 
 
 ## Math
@@ -117,7 +117,7 @@ tx = await challenge.sell(numTokens);
 await tx.wait();
 ```
 #### Reference
-- <https://github.com/sigp/solidity-security-blog#ouflow>{:target="_blank"}
+- <https://github.com/sigp/solidity-security-blog#ouflow>
 
 ### Token whale
 The `balanceOf` is susceptible to an integer underflow in the `_transfer()` function. A challenger with the help of an accomplice can approve tokens and then call `transferFrom()` function to cause token balance of the approved user to underflow.
@@ -137,7 +137,7 @@ tx = await challenge.transferFrom(attacker2.address, ethers.constants.AddressZer
 await tx.wait();
 ```
 #### Reference
-- <https://github.com/sigp/solidity-security-blog#ouflow>{:target="_blank"}
+- <https://github.com/sigp/solidity-security-blog#ouflow>
 
 ### Retirement fund
 The variable `withdrawn` inside `collectPenalty()` function is vulnerable to an integer underflow. A challenger can force send ether to the contract to bypass `require(withdrawn > 0)` condition to withdraw all ethers inside the contract.
@@ -155,8 +155,8 @@ function exploit(address _challenge) payable {
 }
 ```
 #### Reference
-- <https://github.com/sigp/solidity-security-blog#ether>{:target="_blank"}
-- <https://github.com/sigp/solidity-security-blog#ouflow>{:target="_blank"}
+- <https://github.com/sigp/solidity-security-blog#ether>
+- <https://github.com/sigp/solidity-security-blog#ouflow>
 
 ### Mapping
 The variable `isComplete` can be modified by expanding the dynamic array `map`. Dynamic array use Keccak-256 hash to find the starting slot position of the array elements. The first element will start at `keccak256(p)` where `p` is the slot location of the array itself. In some cases, the slot position of an array element can overlap with state variables and unintentionally or intentionally overwrite it.
@@ -174,7 +174,7 @@ index = ethers.BigNumber.from('2').pow('256').sub(ethers.utils.solidityKeccak256
 await tx.wait();
 ```
 #### Reference
-- <https://docs.soliditylang.org/en/v0.4.21/miscellaneous.html#layout-of-state-variables-in-storage>{:target="_blank"}
+- <https://docs.soliditylang.org/en/v0.4.21/miscellaneous.html#layout-of-state-variables-in-storage>
 
 ### Donation
 The `donate()` function contains unintialized storage variable that can intentionally or unintentionally overwrite other state variables in the contract. Since unintialized storage variables default to slot 0, `donation.timestamp` will point to the length of `donation` and `donation.etherAmount` will point to `owner`. A challenger can call `donate()` with their address converted to type `uint` as an argument and overwriting `owner` to the challenger address. Incidentally, allowing the challenger to call `withdraw()` function.
@@ -192,7 +192,7 @@ tx = await challenge.withdraw();
 await tx.wait();
 ```
 #### Reference
-- <https://github.com/sigp/solidity-security-blog#storage>{:target="_blank"}
+- <https://github.com/sigp/solidity-security-blog#storage>
 
 ### Fifty years
 The `upsert()` function contains uninitialized storage variable that can intentionally or unintentionally overwrite other state variables in the contract. Unintialized storage variable default to slot 0, thereby `contribution.amount` points to the length of queue and `contribution.unlockTimestamp` points to `head`. A challenger can call `upsert()` to manipulate the length of `queue` with `msg.value` and `head` with the `timestamp` argument.  
@@ -220,8 +220,8 @@ tx = await challenge.withdraw(1);
 await tx.wait();
 ```
 #### Reference
-- <https://github.com/sigp/solidity-security-blog#storage>{:target="_blank"}
-- <https://github.com/sigp/solidity-security-blog#ouflow>{:target="_blank"}
+- <https://github.com/sigp/solidity-security-blog#storage>
+- <https://github.com/sigp/solidity-security-blog#ouflow>
 
 
 ## Accounts
@@ -252,7 +252,7 @@ while (true) {
 }
 ```
 #### Reference
-- <https://ethereum.stackexchange.com/questions/760/how-is-the-address-of-an-ethereum-contract-computed>{:target="_blank"}
+- <https://ethereum.stackexchange.com/questions/760/how-is-the-address-of-an-ethereum-contract-computed>
 
 ### Public Key
 Public key can be computed from signatures of historical transaction. With the public key, the challenger can call `authenticate()` function.
@@ -284,14 +284,14 @@ tx = await challenge.authenticate(ethers.utils.hexDataSlice(recoveredPubKey, 1))
 await tx.wait();
 ```
 #### Reference
-- <https://ethereum.stackexchange.com/questions/13778/get-public-key-of-any-ethereum-account/79174>{:target="_blank"}
+- <https://ethereum.stackexchange.com/questions/13778/get-public-key-of-any-ethereum-account/79174>
 
 ### Account Takeover
 The private key of the `owner` can be calculated becuase the account uses the same r value for the signature. Ethereum uses Elliptic Curve Digital Signature Algorithm (ECDSA) to validate the origin and integrity of the message. This ECDSA generates a signature pair (r,s). Implementing the same r value for different signature renders the algorithm useless and allows the recovery of private key. Multiple proof of concepts have been written showing how to retrieve the private key and detailing the dangers of this insecure implementation. Because I don't fully understand the math to calculate the private key and I used a script on Github, I will leave the explanation of this challenge at that for now.
 #### Reference
-- <https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm#Security>{:target="_blank"}
-- <https://bitcoin.stackexchange.com/questions/35848/recovering-private-key-when-someone-uses-the-same-k-twice-in-ecdsa-signatures>{:target="_blank"}
-- <https://web.archive.org/web/20160308014317/http://www.nilsschneider.net/2013/01/28/recovering-bitcoin-private-keys.html>{:target="_blank"}
+- <https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm#Security>
+- <https://bitcoin.stackexchange.com/questions/35848/recovering-private-key-when-someone-uses-the-same-k-twice-in-ecdsa-signatures>
+- <https://web.archive.org/web/20160308014317/http://www.nilsschneider.net/2013/01/28/recovering-bitcoin-private-keys.html>
 
 
 ## Miscellaneous
@@ -305,7 +305,7 @@ tx = await challenge.authenticate();
 await tx.wait();
 ```
 #### Reference
-- <https://github.com/sigp/solidity-security-blog#constructors>{:target="_blank"}
+- <https://github.com/sigp/solidity-security-blog#constructors>
 
 ### Token bank
 The `withdraw()` function in the `TokenBankChallenge` contract is vulnerable to reentrancy because when token is transferred, the token contract makes an external call to the recipient if the recipient is a contract and `balanceOf[msg.sender] -= amount` doesn't updates until after the transfer.
@@ -337,4 +337,4 @@ tx = await exploit.exploit(ethers.utils.parseEther('500000'));
 await tx.wait();
 ```
 #### Reference
-- <https://github.com/sigp/solidity-security-blog#reentrancy>{:target="_blank"}
+- <https://github.com/sigp/solidity-security-blog#reentrancy>
