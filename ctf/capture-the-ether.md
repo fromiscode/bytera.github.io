@@ -89,6 +89,7 @@ The `block.blockhash()` function only stores the hash for the 256 most recent bl
 1. Call `lockInGuess()` function with `bytes32(0)` as the argument.
 2. Wait for more than 256 blocks to have been mined.
 3. Call `settle()` function.
+
 #### Reference
 - https://docs.soliditylang.org/en/v0.4.21/units-and-global-variables.html#special-variables-and-functions
 
@@ -102,6 +103,7 @@ The `buy()` function can cause an integer overflow and allows tokens to be bough
 3. Call `buy()` function with `numTokens` as 1. and `msg.value` as 2.
 4. The attacker will have 115792089237316195423570985008687907853269984665640564039458 tokens.
 5. Sell 1415992086870360064 tokens to retrieve all ethers in `TokenSaleChallenge` contract.
+
 ```
 <!-- Javascript -->
 numTokens = ethers.constants.MaxUint256.div(ethers.utils.parseEther('1')).add(1);
@@ -121,6 +123,7 @@ The `balanceOf` is susceptible to an integer underflow in the `_transfer()` func
 2. Call `approve()` function from challenger2 and approve 1 token for challenger1 to transfer.
 3. Challenger1 calls `transferFrom()` function to transfer 1 token from challenger2 to any random address other than challenger1.
 4. Challenger1 now has 2<sup>256</sup> - 1 tokens.
+
 ```
 <!-- Javascript -->
 [attacker1, attacker2] = await ethers.getSigners();
@@ -141,6 +144,7 @@ The variable `withdrawn` inside `collectPenalty()` function is vulnerable to an 
 3. `startBalance` equals 10<sup>18</sup> and `address(this).balance` equals 10<sup>18</sup> + 1.
 4. `withdrawn` will underflow and equal 2<sup>256</sup> - 1.
 5. Call collectPenalty() to retrieve all ethers inside `RetirementFundChallenge` contract.
+
 ```
 <!-- Solidity -->
 function exploit(address _challenge) payable {
@@ -159,6 +163,7 @@ The variable `isComplete` can be modified by expanding the dynamic array `map`. 
 3. Slot 0 is equivalent to slot 2<sup>256</sup> due to an integer overflow.
 4. Index corresponding to slot 0, where `isComplete` is located, can be calculated by 2<sup>256</sup> - Keccak256(1).
 5. Call `set()` function with key of 35707666377435648211887908874984608119992236509074197713628505308453184860938 and value of 1 to overwrite `isComplete` to true.
+
 ```
 <!-- Javascript -->
 tx = await challenge.set(ethers.BigNumber.from('2').pow('256').sub(2), 1);
@@ -176,6 +181,7 @@ The `donate()` function contains unintialized storage variable that can intentio
 2. Divide `uint` representation of the address by `scale` to calculate `msg.value` needed to meet the condition `require(msg.value == etherAmount / scale)`.
 3. Call `donate()` function with `uint` converted address as `etherAmount` and required ether calculated in step 2.
 4. Call `withdraw()` function to retrieve all ether in the contract.
+
 ```
 <!-- Javascript -->
 addressNumber = ethers.BigNumber.from(challenger.address);
@@ -201,6 +207,7 @@ The `upsert()` also contains an integer overflow vulnerability in the condition 
 9. Similar to step 3, `queue.length` in slot 0 will be overwritten from 2 to 1, thereby removing the element at index 1.
 10. Similar to step 4, `head` in slot 1 will be overwritten from the value in step 1 to 0.
 11. Call `withdraw()` function with `index` of 1 to withdraw all ethers in the contract.
+
 ```
 <!-- Javascript -->
 overflowTimestamp = ethers.BigNumber.from('2').pow('256').sub(ethers.BigNumber.from('86400'))
@@ -306,6 +313,7 @@ The `withdraw()` function in the `TokenBankChallenge` contract is vulnerable to 
 5. Call `withdraw()` in `TokenBankChallenge` from the challenger controlled contract to withdraw all tokens it owns.
 6. Token contract will call `tokenFallback()` function in the challenger owned contract which calls `withdraw()` in `TokenBankChallenge` again.
 7. Repeat this process if necessary, until all tokens owned by `TokenBankChallenge` is depleted.
+
 ```
 <!-- Solidity -->
 function tokenFallback(address from, uint256 value, bytes) public {

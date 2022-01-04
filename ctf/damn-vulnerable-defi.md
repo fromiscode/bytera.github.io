@@ -9,7 +9,7 @@ permalink: /damn-vulnerable-defi/
 ### Unstoppable
 The objective of this challenge is:
 - To stop `UnstoppableLender` contract from offering flash loans.
-  
+
 When `flashLoan()` function in `UnstoppableLender` contract is called, it `assert(poolBalance == balanceBefore)`. 
 The contract assumes the tokens can only be transferred via `depositTokens()` function. However, since DVT token is an ERC-20 token, it has native functionalities to transfer tokens to other users. Since `poolBalance` only updates by `depositTokens()` function, the challenger can transfer their DVT token to `UnstoppableLender` contract with `transfer()` function of ERC20 token contract to prevent `assert(poolBalance == balanceBefore)` condition from ever passing.
 ```
@@ -21,7 +21,7 @@ await tx.wait();
 ### Naive receiver
 The objective of this challenge is:
 - Drain all ethers from `FlashLoanReceiver` contract in a single transaction.
-  
+
 Anyone can execute `_receiveEther()` function in `FlashLoanReceiver` contract by calling the `flashLoan()` function in `NaiveReceiverLenderPool` contract and specifying the `FlashLoanReceiver` contract as the `borrower`. Since `FlashLoanReceiver` contract doesn't have any condition checks inside `_executeActionDuringFlashLoan()`, it will always repay try to repay the fee of 1 ether. The challenger can call `flashLoan()` function 10 times with the `borrower` as `FlashLoanReceiver` to drain the 10 ether it owns.
 ```
 <!-- Solidity -->
@@ -35,7 +35,7 @@ function exploit(address _pool, address _receiver) external {
 ### Truster
 The objective of this challenge is:
 - Transfer all DVT tokens from `TrusterLenderPool` to the attacker.
-  
+
 The `flashLoan()` function in the `TrusterLenderPool` contract makes an external call with `target.functionCall(data)`. The challenger can pass in `data` that will approve the DVT tokens that `TrusterLenderPool` contract owns to a challenger owned contract.
 ```
 <!-- Solidity -->
@@ -55,7 +55,7 @@ function exploit(address _pool) external {
 ### Side entrance
 The objective of this challenge is:
 - Transfer all ethers from `SideEntranceLenderPool` contract to the attacker.
-  
+
 The `flashLoan()` function in the `SideEntranceLenderPool` contract makes an external call with `IFlashLoanEtherReceiver(msg.sender).execute{value: amount}()`. The challenger can create a contract with an `execute()` function that calls the `deposit()` function of `SideEntraceLenderPool` contract and send the borrowed ether to `SideEntranceLenderPool` contract. Since `flashLoan()` checks whether the ether has been returned with `require(address(this).balance >= balanceBefore)`, the ether will reside in the `SideEntranceLenderPool`, but be withdrawable by the challenger.
 ```
 <!-- Solidity -->
@@ -82,7 +82,7 @@ contract SideEntranceExploit {
 ### The rewarder
 The objective of this challenge is:
 - Issue a significant number of RWT tokens reward for the upcoming round to the attacker.
-  
+
 The `distributeRewards()` function in `TheRewarderPool` contract mints the accounting token (rTKN) and distributes reward token (RWT) based on the number of rTKN minted in a single transaction. Since rTKN is minted when DVT tokens are deposited to `TheRewarderPool` contract, the challenger can borrow DVT tokens from `FlashLoanerPool` contract and use the borrowed DVT tokens to call `deposit()` function in the `TheRewarderPool` contract to mint an equivalent number of rTKN to the number of DVT tokens deposited. When rTKN is minted, `TheRewarderPool` will call `distributeRewards()` function that reward RWT tokens to users with rTKN balance. The challenger then calls `withdraw()` function in `TheRewarderPool` contract to withdraw the DVT tokens deposited by burning rTKN. In the end, the challenger owned contract will be left with RWT tokens it was rewarded.
 ```
 <!-- Solidity -->
@@ -115,7 +115,7 @@ contract TheRewarderExploit {
 ### Selfie
 The objective of this challenge is:
 - Transfer all DVT tokens from `SelfiePool` contract to the attacker.
-  
+
 To call `queueAction()` function in `SimpleGovernance` contract, the caller must own more than half the supply of DVT tokens at the last snapshot. Since `DamnValuableTokenSnapshot` contract implements `snapshot()` function that anyone can call, the challenger can call the `snapshot()` function after receiving a flash loan to a temporarily increase its balance for taken snapshot. Having more the half the the supply of DVT tokens during the snapshot, the challenger can arbitrarily execute any action including and most importantly the `drainAllFunds()` function in `SelfiePool` contract.
 ```
 <!-- Solidity -->
@@ -149,7 +149,7 @@ contract SelfieExploit {
 ### Compromised
 The objective of this challenge is:
 - Transfer all ethers from `Exchange` contract to the attacker.
-  
+
 The `Exchange` contract retrieves the price for the NFTs it sells from `TrustfulOracle` contract. The oracle determines the price of the NFT based on the median price of three sources. Although the `TrustfulOracle` and `Exchange` contracts doesn't seem to have any vulnerabilities, however the challenge description includes a response from a web server related to the `Exchange`. Hex decode the response, then base64 decoding the hex decoded repsonse will generate the private key for the two sources used by the oracle. With control of two out of three source, the challenger can manipulate the price of the NFT.
 ```
 <!-- Javascript -->
@@ -177,7 +177,7 @@ await tx.wait();
 ### Puppet
 The objective of this challenge is:
 - Transfer all DVT tokens from `PuppetPool` contract to the attacker.
-  
+
 The `PuppetPool` contract allows borrowing of DVT tokens by depositing double the borrowing amount in ether. However, it calculates the required deposit with `uniswapPair.balance * (10 ** 18) / token.balanceOf(uniswapPair)`. The challenger can manipulate both `uniswapPair.balance` and `token.balanceOf(uniswapPair)` by buying ether and selling DVT tokens on Uniswap. The ether required as collateral to borrow DVT tokens from `PuppetPool` will be much lower and can be drained with roughly 10 ethers.
 ```
 <!-- Javascript -->
@@ -193,7 +193,7 @@ await tx.wait();
 ### Puppet v2
 The objective of this challenge is:
 - Transfer all DVT tokens from `PuppetV2Pool` contract to the attacker.
-  
+
 The `PuppetV2Pool` contract allows borrowing of DVT tokens bt depositing triple the borrowing amount in wrapped ether. However, since it calculated the required deposit with `UniswapV2Library.quote(amount.mul(10 ** 18), reservesToken, reservesWETH)`, the challenger can manipulate both `reservesToken` and `reservesWETH` by selling DVT tokens and buying WETH tokens. The ether required as collateral to borrow from `PuppetV2Pool` will be much lower and can be drained with roughly 20 ethers.
 ```
 <!-- Javascript -->
@@ -219,7 +219,7 @@ await tx.wait();
 ### Free rider
 The objective of this challenge is:
 - Drain all NFTs and ethers from `FreeRiderNFTMarketplace` contract.
-  
+
 The `FreeRiderNFTMarketplace` contract has criticals flaws in the way `buyMany()` function and `_buyOne()` function is implemented and. The `buyMany()` function calls `_buyOne()` function for each NFT, which checks the condition `require(msg.value >= priceToPay, "Amount paid is not enough")`. However because `msg.value` will persist throughout a transaction, the challenger can send `msg.value` required for a single NFT to buy as many NFT available. Furthermore, even though the buyer should be paying the seller `FreeRiderNFTMarketplace` contract, `payable(token.ownerOf(tokenId)).sendValue(priceToPay)` will pay the buyer.
 ```
 <!-- Solidity -->
@@ -249,7 +249,7 @@ function uniswapV2Call(address sender, uint amount0, uint amount1, bytes calldat
 ### Backdoor
 The objective of this challenge is:
 - Transfer all `WalletRegistry` contract to the attacker.
-  
+
 The `WalletRegistry` contract doesn't appear to have any vulnerabilities, but because `GnosisSafe` wallets can make `delegatecall` when created, the challenger can create `GnosisSafe` wallets and have it approve tokens it receives from `WalletRegistry` contract.
 ```
 <!-- Solidity -->
