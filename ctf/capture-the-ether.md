@@ -1,10 +1,10 @@
 ---
 layout: page
-title: Capture The Ether Write-up
+title: Capture The Ether
 permalink: /capture-the-ether/
 ---
 
-# Capture The Ether
+# Capture The Ether Write-up
 
 ## Warmup
 ### Deploy a contract

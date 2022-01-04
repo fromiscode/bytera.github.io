@@ -1,10 +1,10 @@
 ---
 layout: page
-title: Damn Vulnerable Defi Write-up
+title: Damn Vulnerable Defi
 permalink: /damn-vulnerable-defi/
 ---
 
-# Damn Vulnerable Defi v2
+# Damn Vulnerable Defi v2 Write-up
 
 ### Unstoppable
 The objective of this challenge is:
