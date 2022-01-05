@@ -22,7 +22,7 @@ await tx.wait();
 The objective of this challenge is:
 - Drain all ethers from `FlashLoanReceiver` contract in a single transaction.
 
-Anyone can execute `_receiveEther()` function in `FlashLoanReceiver` contract by calling the `flashLoan()` function in `NaiveReceiverLenderPool` contract and specifying the `FlashLoanReceiver` contract as the `borrower`. Since `FlashLoanReceiver` contract doesn't have any condition checks inside `_executeActionDuringFlashLoan()`, it will always repay try to repay the fee of 1 ether. The challenger can call `flashLoan()` function 10 times with the `borrower` as `FlashLoanReceiver` to drain the 10 ether it owns.
+Anyone can execute `_receiveEther()` function in `FlashLoanReceiver` contract by calling the `flashLoan()` function in `NaiveReceiverLenderPool` contract and specifying the `FlashLoanReceiver` contract as the `borrower`. Since `FlashLoanReceiver` contract doesn't have any condition checks inside `_executeActionDuringFlashLoan()`, it will always try to repay the fee of 1 ether. The challenger can call `flashLoan()` function 10 times with the `borrower` as `FlashLoanReceiver` to drain the 10 ethers it owns.
 ```
 <!-- Solidity -->
 function exploit(address _pool, address _receiver) external {
